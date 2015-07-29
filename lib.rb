@@ -9,7 +9,13 @@ task :update => :clean do
   includes do |src, dest|
     unless ENV['DEBUG']
       mkdir_p(File.dirname(dest)) unless File.exists?(dest)
-      cp_r src, dest
+      cp_r src, dest unless File.exists?(dest)
+    end
+  end
+  # two pass for shared scripts
+  includes do |src, dest|
+    unless ENV['DEBUG']
+      cp_r src, dest unless File.exists?(dest)
     end
   end
 end
@@ -66,7 +72,13 @@ end
 def requires(file)
   return [] unless File.exists?(file)
 
-  relpath = file.split("/Contents/Scripts/")[1].sub("/$", "").split("/")
+  relpath = file.split("/Contents/Scripts/")
+  if relpath.length > 1
+    relpath = relpath[1]
+  else
+    relpath = relpath.join("/")
+  end
+  relpath = relpath.sub("/$", "").split("/")
 
   libs = []
   File.read(file).scan(/include\(['"](.+)['"]\);/).each do |lib|

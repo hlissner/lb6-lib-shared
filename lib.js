@@ -85,3 +85,15 @@ String.prototype.wrap = function(width) {
 
     return res + str;
 };
+
+/**
+ * Asserts that condition is true, otherwise throw an error.
+ *
+ * @param {bool} condition - The assertion
+ * @param {string} message - The error message to throw if assertion fails
+ */
+Lib.assert = function(condition, message) {
+    if (!condition) {
+        throw message || "Assertion failed";
+    }
+};
